@@ -1,4 +1,13 @@
 import { useState, useRef, useEffect } from "react";
+import {
+  Search,
+  MessageSquare,
+  FolderOpen,
+  Sparkles,
+  Code2,
+  SlidersHorizontal,
+  Palette,
+} from "lucide-react";
 import claudeLogo from "@/assets/claude-logo.png";
 
 type Depth = "Beginner" | "Standard" | "Advanced";
@@ -518,7 +527,7 @@ function ReasoningPanel({
                 Uncertainty
               </span>
               <div style={{ fontSize: 13, color: "#6B7280" }}>
-                Some aspects of this analysis depend on jurisdiction-specific details that may vary.
+                This analysis is based on general assumptions and may vary depending on your specific circumstances.
               </div>
             </div>
 
@@ -638,6 +647,16 @@ export default function ClaudeApp() {
 
   const showLanding = messages.length === 0 && !typing;
 
+  const railItems = [
+    { icon: Search, label: "Search" },
+    { icon: MessageSquare, label: "Chats" },
+    { icon: FolderOpen, label: "Projects" },
+    { icon: Sparkles, label: "Artifacts" },
+    { icon: Code2, label: "Code" },
+    { icon: SlidersHorizontal, label: "Customize" },
+    { icon: Palette, label: "Design" },
+  ];
+
   return (
     <div className="flex h-screen w-screen" style={{ fontFamily: "system-ui, -apple-system, sans-serif", fontSize: 15, background: "#FFFFFF" }}>
       <style>{`
@@ -646,6 +665,26 @@ export default function ClaudeApp() {
           50% { opacity: 1; }
         }
       `}</style>
+
+      {/* Icon rail */}
+      <div
+        className="flex flex-col items-center shrink-0"
+        style={{ width: 48, background: "#EEECE8" }}
+      >
+        <div className="flex flex-col items-center gap-5" style={{ paddingTop: 16 }}>
+          {railItems.map(({ icon: Icon, label }) => (
+            <div key={label} className="flex flex-col items-center cursor-pointer group">
+              <div
+                className="flex items-center justify-center rounded-lg transition group-hover:bg-[#E5E3DF]"
+                style={{ width: 36, height: 36 }}
+              >
+                <Icon size={20} className="text-[#6B7280] group-hover:text-[#1A1A1A] transition" />
+              </div>
+              <span className="text-[9px] text-[#9CA3AF] mt-0.5">{label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* Sidebar */}
       <aside
@@ -659,7 +698,7 @@ export default function ClaudeApp() {
         <div style={{ padding: "0 12px" }}>
           <button
             onClick={newChat}
-            className="w-full flex items-center gap-2 rounded-lg transition hover:bg-white/60"
+            className="w-full flex items-center gap-2 rounded-lg transition hover:bg-white/60 cursor-pointer"
             style={{
               height: 36,
               border: "1px solid #E5E4DF",
