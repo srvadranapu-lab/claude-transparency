@@ -698,7 +698,7 @@ export default function ClaudeApp() {
         <div style={{ padding: "0 12px" }}>
           <button
             onClick={newChat}
-            className="w-full flex items-center gap-2 rounded-lg transition hover:bg-white/60"
+            className="w-full flex items-center gap-2 rounded-lg transition hover:bg-white/60 cursor-pointer"
             style={{
               height: 36,
               border: "1px solid #E5E4DF",
