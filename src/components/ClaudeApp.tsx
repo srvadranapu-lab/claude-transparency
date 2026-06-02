@@ -1,4 +1,15 @@
 import { useState, useRef, useEffect } from "react";
+import {
+  Plus,
+  MessageSquare,
+  Archive,
+  Sparkles,
+  Code2,
+  SlidersHorizontal,
+  Search,
+  Download,
+  ChevronsUpDown,
+} from "lucide-react";
 import claudeLogo from "@/assets/claude-logo.png";
 
 type Depth = "Beginner" | "Standard" | "Advanced";
@@ -518,7 +529,7 @@ function ReasoningPanel({
                 Uncertainty
               </span>
               <div style={{ fontSize: 13, color: "#6B7280" }}>
-                Some aspects of this analysis depend on jurisdiction-specific details that may vary.
+                This analysis is based on general assumptions and may vary depending on your specific circumstances.
               </div>
             </div>
 
@@ -652,28 +663,105 @@ export default function ClaudeApp() {
         className="flex flex-col shrink-0"
         style={{ width: 260, background: "#F7F6F3", borderRight: "1px solid #ECEBE7" }}
       >
-        <div className="flex items-center gap-2" style={{ padding: 20 }}>
-          <img src={claudeLogo} alt="Claude" style={{ width: 24, height: 24 }} />
-          <span style={{ fontSize: 18, color: "#1A1A1A", fontWeight: 600 }}>Claude</span>
-        </div>
-        <div style={{ padding: "0 12px" }}>
-          <button
-            onClick={newChat}
-            className="w-full flex items-center gap-2 rounded-lg transition hover:bg-white/60"
-            style={{
-              height: 36,
-              border: "1px solid #E5E4DF",
-              background: "#fff",
-              fontSize: 13,
-              color: "#1A1A1A",
-              padding: "0 12px",
-            }}
-          >
-            <span style={{ fontSize: 16 }}>+</span> New chat
+        {/* Header */}
+        <div className="flex items-center justify-between" style={{ padding: "20px 20px 12px" }}>
+          <div className="flex items-center gap-2">
+            <img src={claudeLogo} alt="Claude" style={{ width: 24, height: 24 }} />
+            <span style={{ fontSize: 18, color: "#1A1A1A", fontWeight: 600 }}>Claude</span>
+          </div>
+          <button aria-label="Search" className="cursor-pointer">
+            <Search size={20} color="#6B7280" />
           </button>
         </div>
-        <div style={{ padding: "16px 20px 4px", fontSize: 11, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: 0.5 }}>
-          Recents
+
+        {/* Nav list */}
+        <div className="flex flex-col" style={{ padding: "4px 8px", gap: 2 }}>
+          {/* New chat */}
+          <button
+            onClick={newChat}
+            className="flex items-center gap-3 rounded-lg cursor-pointer transition w-full"
+            style={{ height: 40, padding: "0 12px", color: "#374151", fontSize: 14 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#E8E6E1")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+          >
+            <span
+              className="flex items-center justify-center rounded-full"
+              style={{ width: 28, height: 28, border: "1px solid #D1D5DB" }}
+            >
+              <Plus size={18} color="#374151" />
+            </span>
+            <span>New chat</span>
+          </button>
+
+          {[
+            { Icon: MessageSquare, label: "Chats" },
+            { Icon: Archive, label: "Projects" },
+            { Icon: Sparkles, label: "Artifacts" },
+          ].map(({ Icon, label }) => (
+            <div
+              key={label}
+              className="flex items-center gap-3 rounded-lg cursor-pointer transition"
+              style={{ height: 40, padding: "0 12px", color: "#374151", fontSize: 14 }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#E8E6E1")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+            >
+              <Icon size={18} color="#374151" />
+              <span>{label}</span>
+            </div>
+          ))}
+
+          {/* Code with Upgrade pill */}
+          <div
+            className="flex items-center gap-3 rounded-lg cursor-pointer transition"
+            style={{ height: 40, padding: "0 12px", color: "#374151", fontSize: 14 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#E8E6E1")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+          >
+            <Code2 size={18} color="#374151" />
+            <span>Code</span>
+            <span
+              className="ml-auto rounded-full"
+              style={{
+                fontSize: 11,
+                color: "#185FA5",
+                border: "1px solid #185FA5",
+                padding: "1px 8px",
+              }}
+            >
+              Upgrade
+            </span>
+          </div>
+
+          <div
+            className="flex items-center gap-3 rounded-lg cursor-pointer transition"
+            style={{ height: 40, padding: "0 12px", color: "#374151", fontSize: 14 }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = "#E8E6E1")}
+            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+          >
+            <SlidersHorizontal size={18} color="#374151" />
+            <span>Customize</span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div style={{ borderTop: "1px solid #ECEBE7", margin: "12px 12px 0" }} />
+
+        {/* Recents */}
+        <div
+          className="flex items-center justify-between"
+          style={{ padding: "12px 20px 4px" }}
+        >
+          <span
+            style={{
+              fontSize: 11,
+              color: "#9CA3AF",
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+            }}
+          >
+            Recents
+          </span>
+          <SlidersHorizontal size={14} color="#9CA3AF" />
         </div>
         <div className="flex flex-col">
           {["Legal contract review", "Solar panel ROI", "Remote work productivity"].map((t) => (
@@ -686,9 +774,46 @@ export default function ClaudeApp() {
             </div>
           ))}
         </div>
-        <div className="mt-auto flex items-center gap-2" style={{ padding: 16, borderTop: "1px solid #ECEBE7" }}>
-          <div className="rounded-full" style={{ width: 32, height: 32, background: "#D1D5DB" }} />
-          <span style={{ fontSize: 13, color: "#1A1A1A" }}>Anya</span>
+
+        {/* Bottom account row */}
+        <div
+          className="mt-auto flex items-center"
+          style={{ padding: 12, gap: 10, borderTop: "1px solid #ECEBE7" }}
+        >
+          <div
+            className="flex items-center justify-center rounded-full shrink-0"
+            style={{ width: 36, height: 36, background: "#2D2D2D" }}
+          >
+            <span style={{ fontSize: 15, fontWeight: 600, color: "#fff" }}>A</span>
+          </div>
+          <div className="flex flex-col min-w-0" style={{ gap: 1 }}>
+            <span style={{ fontSize: 13, fontWeight: 500, color: "#1A1A1A" }}>Anya</span>
+            <span style={{ fontSize: 11, color: "#9CA3AF" }}>Free plan</span>
+          </div>
+          <div className="ml-auto flex items-center" style={{ gap: 6 }}>
+            <div
+              className="relative flex items-center justify-center rounded-md cursor-pointer"
+              style={{
+                width: 28,
+                height: 28,
+                border: "1px solid #E5E7EB",
+                background: "#fff",
+              }}
+            >
+              <Download size={14} color="#374151" />
+              <span
+                className="absolute rounded-full"
+                style={{
+                  width: 6,
+                  height: 6,
+                  background: "#185FA5",
+                  top: -2,
+                  right: -2,
+                }}
+              />
+            </div>
+            <ChevronsUpDown size={16} color="#6B7280" className="cursor-pointer" />
+          </div>
         </div>
       </aside>
 
