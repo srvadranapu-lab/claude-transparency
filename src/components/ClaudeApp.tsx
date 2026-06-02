@@ -1,4 +1,15 @@
 import { useState, useRef, useEffect } from "react";
+import {
+  Plus,
+  MessageSquare,
+  Archive,
+  Sparkles,
+  Code2,
+  SlidersHorizontal,
+  Search,
+  Download,
+  ChevronsUpDown,
+} from "lucide-react";
 import claudeLogo from "@/assets/claude-logo.png";
 
 type Depth = "Beginner" | "Standard" | "Advanced";
