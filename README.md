@@ -32,7 +32,7 @@ npm run dev
 
 ## Live demo
 
-[Add Vercel URL here after deployment]
+https://claude-transparency.vercel.app/
 
 ## Built with
 
