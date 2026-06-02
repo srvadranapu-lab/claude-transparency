@@ -529,7 +529,7 @@ function ReasoningPanel({
                 Uncertainty
               </span>
               <div style={{ fontSize: 13, color: "#6B7280" }}>
-                Some aspects of this analysis depend on jurisdiction-specific details that may vary.
+                This analysis is based on general assumptions and may vary depending on your specific circumstances.
               </div>
             </div>
 
