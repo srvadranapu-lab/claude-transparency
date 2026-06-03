@@ -600,6 +600,37 @@ export default function ClaudeApp() {
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, ...patch } : m)));
   };
 
+  const fetchFromAnthropic = async (userMessage: string) => {
+    const apiKey = (import.meta as any).env?.VITE_ANTHROPIC_API_KEY as string | undefined;
+    if (!apiKey) throw new Error("Missing VITE_ANTHROPIC_API_KEY");
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true",
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        system: `You are Claude, a helpful AI assistant. When the user asks any question, respond ONLY with a valid JSON object and nothing else — no preamble, no markdown, no backticks. The JSON must have exactly these five keys:\n\n{\n  "answer": "A clear, helpful, conversational answer to the question. 3 to 5 sentences. Plain prose, no bullet points, no headers.",\n  "assumptions": "What assumptions you made about the user's context, location, intent, or situation that shaped this answer. Be honest about what you assumed.",\n  "confidence_gap": "Where your confidence is lower — what depends on facts you don't have, what has high variance, or what the user should not take as certain.",\n  "verify_before_acting": "Specific things the user should verify, check, or confirm before acting on this answer. Concrete and actionable.",\n  "fork_considered": "The alternative interpretation or framing you considered but did not take, and why you chose the approach you did instead."\n}\n\nAlways return valid JSON. Never return anything outside the JSON object.`,
+        messages: [{ role: "user", content: userMessage }],
+      }),
+    });
+    if (!response.ok) throw new Error(`Anthropic API ${response.status}`);
+    const data = await response.json();
+    const text = (data.content as Array<{ text?: string }>).map((i) => i.text || "").join("");
+    const parsed = JSON.parse(text);
+    return parsed as {
+      answer: string;
+      assumptions: string;
+      confidence_gap: string;
+      verify_before_acting: string;
+      fork_considered: string;
+    };
+  };
+
   const submit = (text: string) => {
     const t = text.trim();
     if (!t) return;
@@ -616,10 +647,9 @@ export default function ClaudeApp() {
     setInput("");
     setTyping(true);
 
-    setTimeout(() => {
-      setTyping(false);
-      const answer = ANSWERS[t] ?? CUSTOM_ANSWER;
-      const signals = SIGNALS[t] ?? customSignals;
+    const isHardcoded = t in ANSWERS;
+
+    const renderAssistant = (answer: string, signals: SignalSet) => {
       const assistantId = idRef.current++;
       const assistantMsg: Message = {
         id: assistantId,
@@ -637,7 +667,40 @@ export default function ClaudeApp() {
           p.map((m) => (m.id === assistantId ? { ...m, panelState: "ready_collapsed" } : m))
         );
       }, 3000);
-    }, 1500);
+    };
+
+    if (isHardcoded) {
+      setTimeout(() => {
+        setTyping(false);
+        renderAssistant(ANSWERS[t], SIGNALS[t] ?? customSignals);
+      }, 1500);
+      return;
+    }
+
+    // Custom question — kick off API in parallel with 1500ms typing minimum
+    const apiPromise = fetchFromAnthropic(t).catch(() => null);
+    const delayPromise = new Promise((r) => setTimeout(r, 1500));
+    Promise.all([apiPromise, delayPromise]).then(([parsed]) => {
+      setTyping(false);
+      if (parsed) {
+        const signals: SignalSet = {
+          assumptions: parsed.assumptions,
+          confidence: parsed.confidence_gap,
+          verify: parsed.verify_before_acting,
+          fork: parsed.fork_considered,
+          advAssumptions: "",
+          advConfidence: "",
+          advVerify: "",
+          advFork: "",
+        };
+        renderAssistant(parsed.answer, signals);
+      } else {
+        renderAssistant(
+          "I wasn't able to generate a response right now. Please try again in a moment.",
+          customSignals
+        );
+      }
+    });
   };
 
   const newChat = () => {
