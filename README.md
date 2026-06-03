@@ -17,7 +17,7 @@ This layer surfaces that reasoning transparently, per answer, in a way that resp
 
 - **Inline reasoning panel per answer** — appears directly beneath Claude's response, not in a separate screen or sidebar
 - **Signal depth preference** — users choose Beginner, Standard, or Advanced detail level before each answer
-- **Four signal types** — Assumptions Made, Confidence Gap, Verify Before Acting, Fork Considered
+- **Three signal types and one fork considered** — Assumptions Made, Confidence Gap, Verify Before Acting, Fork Considered
 - **Per-signal feedback** — thumbs-up / thumbs-down on each signal to improve relevance over time
 - **Free tier gate UI** — honest messaging about what the free plan can and cannot guarantee
 
