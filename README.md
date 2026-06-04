@@ -27,8 +27,23 @@ This layer surfaces that reasoning transparently, per answer, in a way that resp
 git clone <repo-url>
 cd <repo-folder>
 npm install
+cp .env.example .env   # then paste your OpenRouter key into VITE_OPENROUTER_API_KEY
 npm run dev
 ```
+
+## Environment variables
+
+The app uses OpenRouter to generate real reasoning responses.
+
+| Variable | Required | Description |
+| --- | --- | --- |
+| `VITE_OPENROUTER_API_KEY` | Yes | Your OpenRouter API key (`sk-or-v1-…`). Get one at https://openrouter.ai/keys |
+
+**Local:** Put it in `.env` at the project root (see `.env.example`).
+**Vercel:** Add it under **Project Settings → Environment Variables** for the Production, Preview, and Development environments, then redeploy.
+
+> ⚠️ Because the key is prefixed with `VITE_`, it is bundled into the client and is visible to anyone who opens the deployed site. This is acceptable for a prototype only. For production, move the OpenRouter call behind a server-side endpoint and keep the key as a server-only secret.
+
 
 ## Live demo
 
