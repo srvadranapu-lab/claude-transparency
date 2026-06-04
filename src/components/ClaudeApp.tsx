@@ -11,6 +11,7 @@ import {
   ChevronsUpDown,
 } from "lucide-react";
 import claudeLogo from "@/assets/claude-logo.png";
+import { generateReasoning } from "@/lib/ai";
 
 type Depth = "Beginner" | "Standard" | "Advanced";
 type PanelState = "idle" | "compiling" | "ready_collapsed" | "expanded";
@@ -648,7 +649,7 @@ export default function ClaudeApp() {
 
     // Custom question — call OpenRouter in parallel with 1500ms typing minimum.
     // Errors are logged in src/lib/ai.ts; surface a graceful fallback in the UI.
-    const apiPromise = generateReasoning(t).catch((err) => {
+    const apiPromise = generateReasoning(t).catch((err: unknown) => {
       console.error("[ClaudeApp] AI request failed:", err);
       return null;
     });
