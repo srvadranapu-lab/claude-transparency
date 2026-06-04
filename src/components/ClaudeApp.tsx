@@ -648,31 +648,27 @@ export default function ClaudeApp() {
     }
 
     // Custom question — call OpenRouter in parallel with 1500ms typing minimum.
-    // Errors are logged in src/lib/ai.ts; surface a graceful fallback in the UI.
     const apiPromise = generateReasoning(t).catch((err: unknown) => {
       console.error("[ClaudeApp] AI request failed:", err);
-      return null;
+      return err instanceof Error ? err.message : String(err);
     });
     const delayPromise = new Promise((r) => setTimeout(r, 1500));
-    Promise.all([apiPromise, delayPromise]).then(([parsed]) => {
+    Promise.all([apiPromise, delayPromise]).then(([result]) => {
       setTyping(false);
-      if (parsed) {
+      if (typeof result === "string") {
+        renderAssistant(result, customSignals);
+      } else {
         const signals: SignalSet = {
-          assumptions: parsed.assumptions,
-          confidence: parsed.confidence_gap,
-          verify: parsed.verify_before_acting,
-          fork: parsed.fork_considered,
+          assumptions: result.assumptions,
+          confidence: result.confidence_gap,
+          verify: result.verify_before_acting,
+          fork: result.fork_considered,
           advAssumptions: "",
           advConfidence: "",
           advVerify: "",
           advFork: "",
         };
-        renderAssistant(parsed.answer, signals);
-      } else {
-        renderAssistant(
-          "I wasn't able to generate a response right now. Please try again in a moment.",
-          customSignals
-        );
+        renderAssistant(result.answer, signals);
       }
     });
   };
